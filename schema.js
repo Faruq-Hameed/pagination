@@ -4,7 +4,7 @@ function schema(input) {
         page: Joi.number().integer().min(1).default(1),
         limit: Joi.number().integer().min(1).default(3),
     })
-    return result.validate(input)
+    return result.validate(input)// returning a validated value
 }
 
 module.exports = schema
