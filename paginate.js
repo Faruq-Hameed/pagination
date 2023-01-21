@@ -1,6 +1,6 @@
-const Joi = require('joi')
+const schema = require('./schema')
 
-function paginate(array, schema, req) {
+function paginate(array, req) {
     const validation = schema(req.query)
     const { page, limit } = validation.value  //using the validated input from the schema
     const startIndex = (page - 1) * limit
