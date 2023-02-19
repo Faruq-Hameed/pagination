@@ -3,8 +3,8 @@ const logger = require('morgan');
 const Joi = require('joi')
 require('dotenv').config()
 
-const users = require('./db');
-const paginate = require('./paginate');
+let users = require('./db');
+const {paginate,paginationError} = require('./paginate');
 const schema = require('./schema')
 
 
@@ -13,22 +13,21 @@ const PORT = process.env.PORT || 3000;
 
 app.use(logger('dev'))
 
+// users.length = 0
 
-//if the validation is successful
-app.get('/users',(req, res) => {
-    validation = schema(req.query)
-    
-    if (validation.error) {
-        res.status(400).send(validation.error.details[0].message);
-        return;
-    }
+app.get('/users', (req, res) => {
 
-    if(users.length === 0) return res.status(404).send('no users available');
-    
-    const  paginatedResult =  paginate(users, req)
+    if (paginationError(users, req, res)) return; //an err res is sent if an err is present
+
+    const paginatedResult = paginate(users, req)
     res.status(200).send(paginatedResult)
+
 });
 
+
+app.use('*', (req, res) => {
+    res.status(404).send('invalid url') // for all unknown url(end point)
+})
 
 app.listen(PORT, ()=>{
     console.log(`listening on port ${PORT}`);
